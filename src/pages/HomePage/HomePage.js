@@ -1,27 +1,29 @@
 import styled from "styled-components"
-
-export default function HomePage() {
+import axios from "axios"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+export default function HomePage({movies}) {
     return (
         <PageContainer>
             Selecione o filme
+            {!movies ?
+                "CARREGANDO FILMES..."
+            :       
+                <ListContainer>
+                    {movies.map(({id, title, posterURL, overview, relseaseDate}) => {
+                        return (
+                            
+                            <Link to = "/sessoes/:idFilme" >
+                                <MovieContainer key = {id}>
+                                    <img src={posterURL} alt={title} loading = "lazy" />
+                                </MovieContainer>
+                            </Link>
+                        )
+                    })}
+                </ListContainer>
 
-            <ListContainer>
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
+            }
 
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-            </ListContainer>
 
         </PageContainer>
     )
