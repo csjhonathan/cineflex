@@ -7,15 +7,6 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 export default function App() {
-    const [movies, setMovies] = useState(false);
-    const urlMovies = "https://mock-api.driven.com.br/api/v8/cineflex/movies"
-
-    useEffect(() => {
-        axios
-            .get(urlMovies)
-            .then(({ data }) => setMovies(data))
-            .catch(({ response }) => console.log(response))
-    }, [])
     return (
         <BrowserRouter>
         
@@ -23,9 +14,9 @@ export default function App() {
 
             <Routes>
 
-                <Route path="/" element={<HomePage movies={movies} />} />
-                <Route path="/sessoes/:idFilme" element={<SeatsPage />} />
-                <Route path="/assentos/:idSessao" element={<SessionsPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/sessoes/:idFilme" element={<SessionsPage />} />
+                <Route path="/assentos/:idSessao" element={<SeatsPage />} />
                 <Route path="/sucesso" element={<SuccessPage />} />
 
             </Routes>
