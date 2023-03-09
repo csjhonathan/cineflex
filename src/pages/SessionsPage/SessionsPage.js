@@ -52,7 +52,7 @@ export default function SessionsPage() {
                     <img src={movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>{movie.overview}</p>
+                    <p>{movie.title}</p>
                 </div>
             </FooterContainer>
 

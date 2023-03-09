@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -6,6 +6,7 @@ export default function SeatsPage() {
     const {idSessao} = useParams();
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
     const [session, setSession] = useState(false);
+    const [selectedSeats, setSelectedSeats] = useState ([])
     
     useEffect(() => {
         axios
@@ -15,7 +16,31 @@ export default function SeatsPage() {
             })
             .catch(erro => console.log(erro.response.data));
 
-    },[])
+    },[]);
+
+    function selectColor(status){
+        if(status === "selected"){
+            return {color : "#1AAE9E", border : "#0E7D71"};
+        }else if(status === "available"){
+            return {color : "#C3CFD9", border : "#7B8B99"};
+        }
+        return {color : " #FBE192", border : "#F7C52B"};
+    }
+
+    function selectSeat (seatId){
+        if(!selectedSeats.includes(seatId)){
+            const seats = [...selectedSeats, seatId]
+            console.log(seats);
+            setSelectedSeats(seats);
+        }else{
+            const removeSeat = selectedSeats.filter(seats => seats !== seatId);
+            console.log(removeSeat);
+            setSelectedSeats(removeSeat);
+        }
+
+        console.log()
+    }
+    
 
     if(!session){
         return <div>Olá</div>
@@ -25,22 +50,28 @@ export default function SeatsPage() {
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                {session.seats.map(({id, name, isAvaiable}) => {
-                    return <SeatItem key = {id} isAvaiable = {isAvaiable} >{name}</SeatItem>
+                {session.seats.map(({id, name, isAvailable}) => {
+                    return (
+                        <SeatItem key = {id} 
+                            isAvailable = {isAvailable} 
+                            isSelected = {selectedSeats.includes(id)}
+                            onClick = {() => selectSeat(id)}
+                        >{name}</SeatItem>
+                    )
                 })}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle captionColor = {selectColor("selected")}/>
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle captionColor = {selectColor("available")}/>
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle captionColor = {selectColor("unavailable")}/>
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
@@ -52,7 +83,9 @@ export default function SeatsPage() {
                 CPF do Comprador:
                 <input placeholder="Digite seu CPF..." />
 
-                <button>Reservar Assento(s)</button>
+                <Link to ={`/sucesso`} >
+                    <button>Reservar Assento(s)</button>
+                </Link>
             </FormContainer>
 
             <FooterContainer>
@@ -112,8 +145,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${({captionColor}) => captionColor.border};         // Essa cor deve mudar
+    background-color: ${({captionColor}) => captionColor.color};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -129,8 +162,8 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${({isAvailable, isSelected}) => isSelected ? "#0E7D71" : isAvailable ? "#808F9D" : "#F7C52B"};;         // Essa cor deve mudar
+    background-color: ${({isAvailable, isSelected}) => isSelected ? "#1AAE9E" : isAvailable ? "#C3CFD9" : "#FBE192"};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
