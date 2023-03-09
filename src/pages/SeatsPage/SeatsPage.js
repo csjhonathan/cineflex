@@ -2,19 +2,21 @@ import { Link, useParams } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios";
 import { useState, useEffect } from "react";
-export default function SeatsPage() {
+export default function SeatsPage({setOrder}) {
     const {idSessao} = useParams();
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
     const [session, setSession] = useState(false);
-    const [selectedSeats, setSelectedSeats] = useState ([])
-    
+    const [selectedSeatsID, setSelectedSeatsID] = useState ([]);
+    const [selectedNumber, selectedSeatsNumber] = useState([]);
+    const [name, setName] = useState("");
+    const [cpf, setCpf] = useState("");
     useEffect(() => {
         axios
             .get(url)
             .then(({data}) => {
                 setSession(data)
             })
-            .catch(erro => console.log(erro.response.data));
+            .catch(() => alert("erro ao fazer requisição, sinto muito, tente novamente mais tarde"));
 
     },[]);
 
@@ -27,21 +29,31 @@ export default function SeatsPage() {
         return {color : " #FBE192", border : "#F7C52B"};
     }
 
-    function selectSeat (seatId){
-        if(!selectedSeats.includes(seatId)){
-            const seats = [...selectedSeats, seatId]
-            console.log(seats);
-            setSelectedSeats(seats);
+    function selectSeat (seatId, status, seatNumber){
+        if(!status) return;
+        if(!selectedSeatsID.includes(seatId) && !selectedNumber.includes(seatNumber)){
+            const seatsID = [...selectedSeatsID, seatId];
+            const seatsNumber = [...selectedNumber, seatNumber];
+            setSelectedSeatsID(seatsID);
+            selectedSeatsNumber(seatsNumber);
         }else{
-            const removeSeat = selectedSeats.filter(seats => seats !== seatId);
-            console.log(removeSeat);
-            setSelectedSeats(removeSeat);
+            const removeSeat = selectedSeatsID.filter(seats => seats !== seatId);
+            const RemoveSeatsNumber = selectedSeatsID.filter(seats => seats !== seatNumber);
+            setSelectedSeatsID(removeSeat);
+            selectedSeatsNumber(RemoveSeatsNumber);
         }
-
-        console.log()
     }
     
-
+    function finishOrder (){
+        const reserve = {
+            reserved : {ids: selectedSeatsID, name: name, cpf: cpf},
+            title : session.movie.title,
+            sessionTime : session.name,
+            sessionData : session.day.date,
+            seatsNumber : selectedNumber
+        }
+        setOrder(reserve)
+    }
     if(!session){
         return <div>Olá</div>
     }
@@ -54,8 +66,9 @@ export default function SeatsPage() {
                     return (
                         <SeatItem key = {id} 
                             isAvailable = {isAvailable} 
-                            isSelected = {selectedSeats.includes(id)}
-                            onClick = {() => selectSeat(id)}
+                            isSelected = {selectedSeatsID.includes(id)}
+                            onClick = {() => selectSeat(id, isAvailable, name)}
+                            data-test="seat"
                         >{name}</SeatItem>
                     )
                 })}
@@ -78,17 +91,27 @@ export default function SeatsPage() {
 
             <FormContainer>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input 
+                placeholder="Digite seu nome..." 
+                onChange={e=> setName(e.target.value)}
+                value = {name}
+                data-test="client-name"
+                />
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <input 
+                placeholder="Digite seu CPF..." 
+                onChange={e=> setCpf(e.target.value)}
+                value = {cpf}
+                data-test="client-cpf"
+                />
 
                 <Link to ={`/sucesso`} >
-                    <button>Reservar Assento(s)</button>
+                    <button onClick={finishOrder} data-test="book-seat-btn">Reservar Assento(s)</button>
                 </Link>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={session.movie.posterURL} alt={session.movie.title} />
                 </div>

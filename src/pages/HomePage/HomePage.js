@@ -25,7 +25,7 @@ export default function HomePage() {
                         return (
                             
                             <Link to = {`/sessoes/${id}`} key = {id}>
-                                <MovieContainer >
+                                <MovieContainer data-test = "movie">
                                     <img src={posterURL} alt={title} loading = "lazy" />
                                 </MovieContainer>
                             </Link>

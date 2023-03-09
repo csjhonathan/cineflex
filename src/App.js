@@ -7,6 +7,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 export default function App() {
+    const [order, setOrder] = useState();
     return (
         <BrowserRouter>
         
@@ -16,8 +17,8 @@ export default function App() {
 
                 <Route path="/" element={<HomePage />} />
                 <Route path="/sessoes/:idFilme" element={<SessionsPage />} />
-                <Route path="/assentos/:idSessao" element={<SeatsPage />} />
-                <Route path="/sucesso" element={<SuccessPage />} />
+                <Route path="/assentos/:idSessao" element={<SeatsPage setOrder = {setOrder}/>} />
+                <Route path="/sucesso" element={<SuccessPage order = {order}/>} />
 
             </Routes>
 
