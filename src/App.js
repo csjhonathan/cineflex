@@ -8,17 +8,27 @@ import { useState, useEffect } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 export default function App() {
     const [order, setOrder] = useState();
+    const [home, setHome] = useState(false);
+    const [idFilme, setIdFilme] = useState(false);
+    const [sessionId, setSessionId] = useState(false);
+
     return (
         <BrowserRouter>
         
-            <NavContainer>CINEFLEX</NavContainer>
+            <NavContainer>
+                {!home?
+                    <a>CINEFLEX</a>
+                :
+                    home
+                }
+            </NavContainer>
 
             <Routes>
 
                 <Route path="/" element={<HomePage />} />
-                <Route path="/sessoes/:idFilme" element={<SessionsPage />} />
-                <Route path="/assentos/:idSessao" element={<SeatsPage setOrder = {setOrder}/>} />
-                <Route path="/sucesso" element={<SuccessPage order = {order}/>} />
+                <Route path="/sessoes/:idFilme" element={<SessionsPage setHome = {setHome} setIdFilme = {setIdFilme}/>} />
+                <Route path="/assentos/:idSessao" element={<SeatsPage setHome = {setHome} setOrder = {setOrder}  idFilme = {idFilme} setSessionId = {setSessionId}/>} />
+                <Route path="/sucesso" element={<SuccessPage setHome = {setHome} order = {order} sessionId = {sessionId}/>} />
 
             </Routes>
 
@@ -41,5 +51,12 @@ const NavContainer = styled.div`
     a {
         text-decoration: none;
         color: #E8833A;
+    }
+    button{
+        position: absolute;
+        left: 30px;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background-color: transparent;
     }
 `

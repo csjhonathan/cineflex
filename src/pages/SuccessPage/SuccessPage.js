@@ -1,49 +1,51 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios"
 import { useEffect, useState } from "react"
-export default function SuccessPage({order}) {
+import arrow from "../../assets/img/arrow.png"
+export default function SuccessPage({ order, setHome }) {
     const [success, setSuccess] = useState(false);
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`
-    console.log(order.reserved)
-    useEffect(()=> {
+    useEffect(() => {
         axios
             .post(url, order.reserved)
-            .then(()=> setSuccess(true))
-            .catch(()=> setSuccess(false))
+            .then(() => setSuccess(true))
+            .catch(() => setSuccess(false));
+        
+        setHome(false);
     }, [])
     return (
-        success ? 
-        <PageContainer>
-            <h1>Pedido feito <br /> com sucesso!</h1>
+        success ?
+            <PageContainer>
+                <h1>Pedido feito <br /> com sucesso!</h1>
 
-            <TextContainer data-test="movie-info">
-                <strong><p>Filme e sessão</p></strong>
-                <p>{order.title}</p>
-                <p>{`${order.sessionData} - ${order.sessionTime}`}</p>
-            </TextContainer>
+                <TextContainer data-test="movie-info">
+                    <strong><p>Filme e sessão</p></strong>
+                    <p>{order.title}</p>
+                    <p>{`${order.sessionData} - ${order.sessionTime}`}</p>
+                </TextContainer>
 
-            <TextContainer data-test="seats-info">
-                <strong><p>Ingressos</p></strong>
-                {order.seatsNumber.sort((a,b) => a-b).map(seatNumber=> <p key = {seatNumber} >Assento {seatNumber}</p>)}
-            </TextContainer>
+                <TextContainer data-test="seats-info">
+                    <strong><p>Ingressos</p></strong>
+                    {order.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)}
+                </TextContainer>
 
-            <TextContainer  data-test="client-info">
-                <strong><p>Comprador</p></strong>
-                <p>Nome: {order.reserved.name}</p>
-                <p>CPF: {order.reserved.cpf}</p>
-            </TextContainer>
+                <TextContainer data-test="client-info">
+                    <strong><p>Comprador</p></strong>
+                    <p>Nome: {order.reserved.name}</p>
+                    <p>CPF: {order.reserved.cpf}</p>
+                </TextContainer>
 
-            <Link to= "/">
-                <button  data-test="go-home-btn">Voltar para Home</button>
-            </Link>
-        </PageContainer>
+                <Link to="/">
+                    <button data-test="go-home-btn">Voltar para Home</button>
+                </Link>
+            </PageContainer>
 
-        :
+            :
 
-        <PageContainer>
-            <h1>CARREGANDO/ERRO</h1>
-        </PageContainer>
+            <PageContainer>
+                <h1>CARREGANDO/ERRO</h1>
+            </PageContainer>
     )
 }
 

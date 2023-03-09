@@ -1,8 +1,9 @@
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios";
 import { useState, useEffect } from "react";
-export default function SeatsPage({setOrder}) {
+import arrow from "../../assets/img/arrow.png"
+export default function SeatsPage({setOrder, setHome, idFilme}) {
     const {idSessao} = useParams();
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
     const [session, setSession] = useState(false);
@@ -10,6 +11,10 @@ export default function SeatsPage({setOrder}) {
     const [selectedNumber, selectedSeatsNumber] = useState([]);
     const [name, setName] = useState("");
     const [cpf, setCpf] = useState("");
+    const navigate = useNavigate()
+    function navigateTo () {
+        navigate(`/sessoes/${idFilme}`);
+    }
     useEffect(() => {
         axios
             .get(url)
@@ -17,6 +22,12 @@ export default function SeatsPage({setOrder}) {
                 setSession(data)
             })
             .catch(() => alert("erro ao fazer requisição, sinto muito, tente novamente mais tarde"));
+        
+        setHome(
+            <>
+                <button data-test="go-home-header-btn" onClick = {navigateTo}><img src ={arrow}/></button>
+            </>
+        )
 
     },[]);
 

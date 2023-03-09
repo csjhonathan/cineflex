@@ -1,21 +1,35 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-export default function SessionsPage() {
+import arrow  from "../../assets/img/arrow.png"
+export default function SessionsPage({setHome, setIdFilme}) {
     const [movie, setMovie] = useState(false);
     const [days, setDays] = useState(false);
     const {idFilme} = useParams();
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`;
+    const navigate = useNavigate();
 
+    function navigateTo () {
+        setHome(false);
+        navigate("/");
+    }
     useEffect(() => {
         axios
             .get(url)
             .then(({data}) => {
                 setMovie(data);
                 setDays(data.days);
+                setIdFilme(idFilme);
             })
             .catch(erro => console.log(erro));
+        
+        setHome(
+            <>
+                <button data-test="go-home-header-btn" onClick = {navigateTo}><img src ={arrow}/></button>
+                <a>CINEFLEX</a>
+            </>
+        )
 
     },[])
 

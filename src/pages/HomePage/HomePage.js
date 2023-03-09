@@ -13,7 +13,6 @@ export default function HomePage() {
             .then(({ data }) => setMovies(data))
             .catch(({ response }) => console.log(response))
     }, []);
-
     return (
         <PageContainer>
             Selecione o filme
@@ -32,10 +31,7 @@ export default function HomePage() {
                         )
                     })}
                 </ListContainer>
-
             }
-
-
         </PageContainer>
     )
 }
