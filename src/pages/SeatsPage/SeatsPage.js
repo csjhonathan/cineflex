@@ -30,7 +30,10 @@ export default function SeatsPage({setOrder}) {
     }
 
     function selectSeat (seatId, status, seatNumber){
-        if(!status) return;
+        if(!status){
+            alert("Assento indisponível")
+            return;
+        };
         if(!selectedSeatsID.includes(seatId) && !selectedNumber.includes(seatNumber)){
             const seatsID = [...selectedSeatsID, seatId];
             const seatsNumber = [...selectedNumber, seatNumber];
