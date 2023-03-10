@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import arrow  from "../../assets/img/arrow.png"
+import Loading from "../../components/Loading ";
 export default function SessionsPage({setHome, setIdFilme}) {
     const [movie, setMovie] = useState(false);
     const [days, setDays] = useState(false);
@@ -37,7 +38,11 @@ export default function SessionsPage({setHome, setIdFilme}) {
     },[])
 
     if(!movie){
-        return <div>Carregando sessões...</div>
+        return (
+            <PageContainer>
+                <Loading/>
+            </PageContainer>
+        )
     }
 
     return (

@@ -3,8 +3,9 @@ import styled from "styled-components"
 import axios from "axios";
 import { useState, useEffect } from "react";
 import arrow from "../../assets/img/arrow.png"
-import SeatReserver from "./SeatReserver ";
-export default function SeatsPage({ setOrder, setHome, idFilme }) {
+import SeatReserver from "../../components/SeatReserver ";
+import Loading from "../../components/Loading ";
+export default function SeatsPage({ setOrder, setHome, idFilme, setSuccess }) {
     const { idSessao } = useParams();
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
     const [session, setSession] = useState(false);
@@ -88,7 +89,11 @@ export default function SeatsPage({ setOrder, setHome, idFilme }) {
         finishOrder()
     }
     if (!session) {
-        return <div>Olá</div>
+        return (
+            <PageContainer>
+                <Loading/>
+            </PageContainer>
+        )
     }
     return (
         <PageContainer>

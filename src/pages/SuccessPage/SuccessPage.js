@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import Loading from "../../components/Loading "
 export default function SuccessPage({ order, setHome }) {
     const [success, setSuccess] = useState(false);
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`;
@@ -14,46 +15,46 @@ export default function SuccessPage({ order, setHome }) {
         setHome(false);
     }, [])
 
+    if (!success) {
+        return (
+            <PageContainer>
+                <Loading />
+            </PageContainer>
+        )
+    }
     return (
-        success ?
-            <PageContainer>
-                <h1>Pedido feito <br /> com sucesso!</h1>
+        <PageContainer>
+            <h1>Pedido feito <br /> com sucesso!</h1>
 
-                <TextContainer data-test="movie-info">
-                    <strong><p>Filme e sessão</p></strong>
-                    <p>{order.title}</p>
-                    <p>{`${order.sessionData} - ${order.sessionTime}`}</p>
-                </TextContainer>
+            <TextContainer data-test="movie-info">
+                <strong><p>Filme e sessão</p></strong>
+                <p>{order.title}</p>
+                <p>{`${order.sessionData} - ${order.sessionTime}`}</p>
+            </TextContainer>
 
-                <TextContainer data-test="seats-info">
-                    <strong><p>Ingressos</p></strong>
-                    {order.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)}
-                </TextContainer>
+            <TextContainer data-test="seats-info">
+                <strong><p>Ingressos</p></strong>
+                {order.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)}
+            </TextContainer>
 
-                <>
-                    {order.reserved.compradores.map(({ nome, cpf }) => {
+            <>
+                {order.reserved.compradores.map(({ nome, cpf }) => {
 
-                        return (
-                            <TextContainer data-test="client-info" key={cpf}>
-                                <strong><p>Comprador</p></strong>
-                                <p>Nome: {nome}</p>
-                                <p>CPF: {cpf}</p>
-                            </TextContainer>
-                        )
-                    })}
-                </>
+                    return (
+                        <TextContainer data-test="client-info" key={cpf}>
+                            <strong><p>Comprador</p></strong>
+                            <p>Nome: {nome}</p>
+                            <p>CPF: {cpf}</p>
+                        </TextContainer>
+                    )
+                })}
+            </>
 
 
-                <Link to="/">
-                    <button data-test="go-home-btn">Voltar para Home</button>
-                </Link>
-            </PageContainer>
-
-            :
-
-            <PageContainer>
-                <h1>CARREGANDO/ERRO</h1>
-            </PageContainer>
+            <Link to="/">
+                <button data-test="go-home-btn">Voltar para Home</button>
+            </Link>
+        </PageContainer>
     )
 }
 

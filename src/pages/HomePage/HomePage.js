@@ -2,6 +2,7 @@ import styled from "styled-components"
 import axios from "axios"
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Loading from "../../components/Loading ";
 export default function HomePage() {
 
     const [movies, setMovies] = useState(false);
@@ -15,11 +16,14 @@ export default function HomePage() {
     }, []);
     return (
         <PageContainer>
-            Selecione o filme
+            
             {!movies ?
-                "CARREGANDO FILMES..."
+                <Loading />
             :       
+            <>
+                Selecione o filme
                 <ListContainer>
+                    
                     {movies.map(({id, title, posterURL, overview, relseaseDate}) => {
                         return (
                             
@@ -31,6 +35,7 @@ export default function HomePage() {
                         )
                     })}
                 </ListContainer>
+            </>
             }
         </PageContainer>
     )
