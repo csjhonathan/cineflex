@@ -1,8 +1,7 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import arrow from "../../assets/img/arrow.png"
 export default function SuccessPage({ order, setHome }) {
     const [success, setSuccess] = useState(false);
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`
@@ -11,9 +10,10 @@ export default function SuccessPage({ order, setHome }) {
             .post(url, order.reserved)
             .then(() => setSuccess(true))
             .catch(() => setSuccess(false));
-        
+
         setHome(false);
     }, [])
+
     return (
         success ?
             <PageContainer>
@@ -30,11 +30,19 @@ export default function SuccessPage({ order, setHome }) {
                     {order.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)}
                 </TextContainer>
 
-                <TextContainer data-test="client-info">
-                    <strong><p>Comprador</p></strong>
-                    <p>Nome: {order.reserved.name}</p>
-                    <p>CPF: {order.reserved.cpf}</p>
-                </TextContainer>
+                <>
+                    {order.reserved.compradores.map(({ nome, cpf }) => {
+
+                        return (
+                            <TextContainer data-test="client-info" key={cpf}>
+                                <strong><p>Comprador</p></strong>
+                                <p>Nome: {nome}</p>
+                                <p>CPF: {cpf}</p>
+                            </TextContainer>
+                        )
+                    })}
+                </>
+
 
                 <Link to="/">
                     <button data-test="go-home-btn">Voltar para Home</button>

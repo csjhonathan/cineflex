@@ -1,74 +1,96 @@
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 import axios from "axios";
 import { useState, useEffect } from "react";
 import arrow from "../../assets/img/arrow.png"
-export default function SeatsPage({setOrder, setHome, idFilme}) {
-    const {idSessao} = useParams();
+import SeatReserver from "./SeatReserver ";
+export default function SeatsPage({ setOrder, setHome, idFilme }) {
+    const { idSessao } = useParams();
     const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
     const [session, setSession] = useState(false);
-    const [selectedSeatsID, setSelectedSeatsID] = useState ([]);
+    const [selectedSeatsID, setSelectedSeatsID] = useState([]);
     const [selectedNumber, selectedSeatsNumber] = useState([]);
+    const [compradores, setCompradores] = useState([]);
     const [name, setName] = useState("");
     const [cpf, setCpf] = useState("");
-    const navigate = useNavigate()
-    function navigateTo () {
+    const navigate = useNavigate();
+
+    function navigateTo() {
         navigate(`/sessoes/${idFilme}`);
     }
+
     useEffect(() => {
         axios
             .get(url)
-            .then(({data}) => {
+            .then(({ data }) => {
                 setSession(data)
             })
             .catch(() => alert("erro ao fazer requisição, sinto muito, tente novamente mais tarde"));
-        
+
         setHome(
             <>
-                <button data-test="go-home-header-btn" onClick = {navigateTo}><img src ={arrow}/></button>
+                <button data-test="go-home-header-btn" onClick={navigateTo}><img src={arrow} alt="imagem de seta pra esquerda" /></button>
             </>
         )
 
-    },[]);
+    }, []);
 
-    function selectColor(status){
-        if(status === "selected"){
-            return {color : "#1AAE9E", border : "#0E7D71"};
-        }else if(status === "available"){
-            return {color : "#C3CFD9", border : "#7B8B99"};
+    function selectColor(status) {
+        if (status === "selected") {
+            return { color: "#1AAE9E", border: "#0E7D71" };
+        } else if (status === "available") {
+            return { color: "#C3CFD9", border: "#7B8B99" };
         }
-        return {color : " #FBE192", border : "#F7C52B"};
+        return { color: " #FBE192", border: "#F7C52B" };
     }
 
-    function selectSeat (seatId, status, seatNumber){
-        if(!status){
+    function selectSeat(seatId, status, seatNumber) {
+        
+        if (!status) {
             alert("Assento indisponível")
             return;
         };
-        if(!selectedSeatsID.includes(seatId) && !selectedNumber.includes(seatNumber)){
+        if (!selectedSeatsID.includes(seatId) && !selectedNumber.includes(seatNumber)) {
             const seatsID = [...selectedSeatsID, seatId];
             const seatsNumber = [...selectedNumber, seatNumber];
             setSelectedSeatsID(seatsID);
             selectedSeatsNumber(seatsNumber);
-        }else{
+        } else{
+            if( compradores.some(c => c.idAssento === seatId) && window.confirm("DESEJA REALMENTE REMOVER O ASSENTO E APAGAR OS DADOS?")){
+                const deleted = compradores.filter(c => c.idAssento!==seatId);
+                setCompradores(deleted);
+            }
             const removeSeat = selectedSeatsID.filter(seats => seats !== seatId);
-            const RemoveSeatsNumber = selectedSeatsID.filter(seats => seats !== seatNumber);
+            const RemoveSeatsNumber = selectedNumber.filter(seats => seats !== seatNumber);
             setSelectedSeatsID(removeSeat);
             selectedSeatsNumber(RemoveSeatsNumber);
+            return;
         }
+        
     }
-    
-    function finishOrder (){
+
+    function finishOrder() {
+
         const reserve = {
-            reserved : {ids: selectedSeatsID, name: name, cpf: cpf},
-            title : session.movie.title,
-            sessionTime : session.name,
-            sessionData : session.day.date,
-            seatsNumber : selectedNumber
+            reserved: { ids: selectedSeatsID, compradores },
+            title: session.movie.title,
+            sessionTime: session.name,
+            sessionData: session.day.date,
+            seatsNumber: selectedNumber
         }
-        setOrder(reserve)
+        setOrder(reserve);
+        navigate(`/sucesso`);
     }
-    if(!session){
+
+    function submitSeats(e) {
+        e.preventDefault();
+        if (selectedSeatsID.length === 0 || selectedNumber.length === 0) {
+            alert("Selecione pelo menos um assento");
+            return;
+        }
+        finishOrder()
+    }
+    if (!session) {
         return <div>Olá</div>
     }
     return (
@@ -76,12 +98,12 @@ export default function SeatsPage({setOrder, setHome, idFilme}) {
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                {session.seats.map(({id, name, isAvailable}) => {
+                {session.seats.map(({ id, name, isAvailable }) => {
                     return (
-                        <SeatItem key = {id} 
-                            isAvailable = {isAvailable} 
-                            isSelected = {selectedSeatsID.includes(id)}
-                            onClick = {() => selectSeat(id, isAvailable, name)}
+                        <SeatItem key={id}
+                            isAvailable={isAvailable}
+                            isSelected={selectedSeatsID.includes(id)}
+                            onClick={() => selectSeat(id, isAvailable, name)}
                             data-test="seat"
                         >{name}</SeatItem>
                     )
@@ -90,39 +112,63 @@ export default function SeatsPage({setOrder, setHome, idFilme}) {
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle captionColor = {selectColor("selected")}/>
+                    <CaptionCircle captionColor={selectColor("selected")} />
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle captionColor = {selectColor("available")}/>
+                    <CaptionCircle captionColor={selectColor("available")} />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle captionColor = {selectColor("unavailable")}/>
+                    <CaptionCircle captionColor={selectColor("unavailable")} />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
-            <FormContainer>
-                Nome do Comprador:
-                <input 
-                placeholder="Digite seu nome..." 
-                onChange={e=> setName(e.target.value)}
-                value = {name}
-                data-test="client-name"
-                />
+            <FormContainer onSubmit={submitSeats}>
+                {selectedNumber.length === 0 ?
+                    <>
+                        <label htmlFor={"name"}>Nome do Comprador:</label>
+                        <input
+                            placeholder="Digite seu nome..."
+                            onChange={e => setName(e.target.value)}
+                            value={name}
+                            required
+                            id={"name"}
+                            name={"name"}
+                            data-test="client-name"
+                        />
+                        <label htmlFor={"cpf"}>CPF do Comprador:</label>
+                        <input
+                            placeholder="Digite seu CPF..."
+                            onChange={e => setCpf(e.target.value)}
+                            value={cpf}
+                            required
+                            id={"cpf"}
+                            name={"cpf"}
+                            data-test="client-cpf"
+                        />
+                    </>
+                    :
 
-                CPF do Comprador:
-                <input 
-                placeholder="Digite seu CPF..." 
-                onChange={e=> setCpf(e.target.value)}
-                value = {cpf}
-                data-test="client-cpf"
-                />
+                    selectedNumber.map((seat) => {
+                        return (
+                            <SeatReserver key={seat} 
+                                seat = {seat}
+                                compradores = {compradores}
+                                setCompradores = {setCompradores}
+                                selectedSeatsID = {selectedSeatsID}
+                                selectedNumber = {selectedNumber}
+                            />                          
+    
+                        )
+                    })
 
-                <Link to ={`/sucesso`} >
-                    <button onClick={finishOrder} data-test="book-seat-btn">Reservar Assento(s)</button>
-                </Link>
+                }
+                <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
+                {/* <Link to ={`/sucesso`} >
+                    
+                </Link> */}
             </FormContainer>
 
             <FooterContainer data-test="footer">
@@ -160,7 +206,7 @@ const SeatsContainer = styled.div`
     justify-content: center;
     margin-top: 20px;
 `
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     width: calc(100vw - 40px); 
     display: flex;
     flex-direction: column;
@@ -182,8 +228,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid ${({captionColor}) => captionColor.border};         // Essa cor deve mudar
-    background-color: ${({captionColor}) => captionColor.color};    // Essa cor deve mudar
+    border: 1px solid ${({ captionColor }) => captionColor.border};         // Essa cor deve mudar
+    background-color: ${({ captionColor }) => captionColor.color};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -199,8 +245,8 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid ${({isAvailable, isSelected}) => isSelected ? "#0E7D71" : isAvailable ? "#808F9D" : "#F7C52B"};;         // Essa cor deve mudar
-    background-color: ${({isAvailable, isSelected}) => isSelected ? "#1AAE9E" : isAvailable ? "#C3CFD9" : "#FBE192"};    // Essa cor deve mudar
+    border: 1px solid ${({ isAvailable, isSelected }) => isSelected ? "#0E7D71" : isAvailable ? "#808F9D" : "#F7C52B"};         // Essa cor deve mudar
+    background-color: ${({ isAvailable, isSelected }) => isSelected ? "#1AAE9E" : isAvailable ? "#C3CFD9" : "#FBE192"};    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;

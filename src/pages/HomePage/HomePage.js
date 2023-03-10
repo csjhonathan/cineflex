@@ -11,7 +11,7 @@ export default function HomePage() {
         axios
             .get(urlMovies)
             .then(({ data }) => setMovies(data))
-            .catch(({ response }) => console.log(response))
+            .catch(({ response }) => alert("Desculpe, mas não foi possível carregar a lista de filmes"))
     }, []);
     return (
         <PageContainer>

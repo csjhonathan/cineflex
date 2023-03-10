@@ -22,12 +22,15 @@ export default function SessionsPage({setHome, setIdFilme}) {
                 setDays(data.days);
                 setIdFilme(idFilme);
             })
-            .catch(erro => console.log(erro));
+            .catch(erro => {
+                alert("Desculpe, mas não foi possível carregar esta sessão");
+                navigate("/")
+            });
         
         setHome(
             <>
-                <button data-test="go-home-header-btn" onClick = {navigateTo}><img src ={arrow}/></button>
-                <a>CINEFLEX</a>
+                <button data-test="go-home-header-btn" onClick = {navigateTo}><img src ={arrow} alt ="imagem de seta pra esquerda"/></button>
+                <p>CINEFLEX</p>
             </>
         )
 
