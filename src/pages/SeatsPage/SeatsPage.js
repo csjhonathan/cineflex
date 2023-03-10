@@ -11,8 +11,6 @@ export default function SeatsPage({ setOrder, setHome, idFilme }) {
     const [selectedSeatsID, setSelectedSeatsID] = useState([]);
     const [selectedNumber, selectedSeatsNumber] = useState([]);
     const [compradores, setCompradores] = useState([]);
-    const [name, setName] = useState("");
-    const [cpf, setCpf] = useState("");
     const navigate = useNavigate();
 
     function navigateTo() {
@@ -70,9 +68,8 @@ export default function SeatsPage({ setOrder, setHome, idFilme }) {
     }
 
     function finishOrder() {
-
         const reserve = {
-            reserved: { ids: selectedSeatsID, compradores },
+            reserved: { ids: selectedSeatsID,  compradores},
             title: session.movie.title,
             sessionTime: session.name,
             sessionData: session.day.date,
@@ -126,31 +123,15 @@ export default function SeatsPage({ setOrder, setHome, idFilme }) {
             </CaptionContainer>
 
             <FormContainer onSubmit={submitSeats}>
-                {selectedNumber.length === 0 ?
-                    <>
-                        <label htmlFor={"name"}>Nome do Comprador:</label>
-                        <input
-                            placeholder="Digite seu nome..."
-                            onChange={e => setName(e.target.value)}
-                            value={name}
-                            required
-                            id={"name"}
-                            name={"name"}
-                            data-test="client-name"
-                        />
-                        <label htmlFor={"cpf"}>CPF do Comprador:</label>
-                        <input
-                            placeholder="Digite seu CPF..."
-                            onChange={e => setCpf(e.target.value)}
-                            value={cpf}
-                            required
-                            id={"cpf"}
-                            name={"cpf"}
-                            data-test="client-cpf"
-                        />
-                    </>
-                    :
-
+                {selectedNumber.length < 1 ?
+                    <SeatReserver 
+                        seat = {selectedNumber[0]}
+                        compradores = {compradores}
+                        setCompradores = {setCompradores}
+                        selectedSeatsID = {selectedSeatsID}
+                        selectedNumber = {selectedNumber}
+                    />
+                :
                     selectedNumber.map((seat) => {
                         return (
                             <SeatReserver key={seat} 
@@ -166,9 +147,6 @@ export default function SeatsPage({ setOrder, setHome, idFilme }) {
 
                 }
                 <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
-                {/* <Link to ={`/sucesso`} >
-                    
-                </Link> */}
             </FormContainer>
 
             <FooterContainer data-test="footer">

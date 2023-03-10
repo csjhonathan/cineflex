@@ -4,7 +4,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 export default function SuccessPage({ order, setHome }) {
     const [success, setSuccess] = useState(false);
-    const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`
+    const url = `https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many`;
     useEffect(() => {
         axios
             .post(url, order.reserved)
