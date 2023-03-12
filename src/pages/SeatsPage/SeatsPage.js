@@ -44,7 +44,7 @@ export default function SeatsPage({ setOrder, setHome, idFilme, setSuccess }) {
     }
 
     function selectSeat(seatId, status, seatNumber) {
-        
+
         if (!status) {
             alert("Assento indisponível")
             return;
@@ -54,9 +54,9 @@ export default function SeatsPage({ setOrder, setHome, idFilme, setSuccess }) {
             const seatsNumber = [...selectedNumber, seatNumber];
             setSelectedSeatsID(seatsID);
             selectedSeatsNumber(seatsNumber);
-        } else{
-            if( compradores.some(c => c.idAssento === seatId) && window.confirm("DESEJA REALMENTE REMOVER O ASSENTO E APAGAR OS DADOS?")){
-                const deleted = compradores.filter(c => c.idAssento!==seatId);
+        } else {
+            if (compradores.some(c => c.idAssento === seatId) && window.confirm("DESEJA REALMENTE REMOVER O ASSENTO E APAGAR OS DADOS?")) {
+                const deleted = compradores.filter(c => c.idAssento !== seatId);
                 setCompradores(deleted);
             }
             const removeSeat = selectedSeatsID.filter(seats => seats !== seatId);
@@ -65,12 +65,12 @@ export default function SeatsPage({ setOrder, setHome, idFilme, setSuccess }) {
             selectedSeatsNumber(RemoveSeatsNumber);
             return;
         }
-        
+
     }
 
     function finishOrder() {
         const reserve = {
-            reserved: { ids: selectedSeatsID,  compradores},
+            reserved: { ids: selectedSeatsID, compradores },
             title: session.movie.title,
             sessionTime: session.name,
             sessionData: session.day.date,
@@ -91,7 +91,7 @@ export default function SeatsPage({ setOrder, setHome, idFilme, setSuccess }) {
     if (!session) {
         return (
             <PageContainer>
-                <Loading/>
+                <Loading />
             </PageContainer>
         )
     }
@@ -129,24 +129,24 @@ export default function SeatsPage({ setOrder, setHome, idFilme, setSuccess }) {
 
             <FormContainer onSubmit={submitSeats}>
                 {selectedNumber.length < 1 ?
-                    <SeatReserver 
-                        seat = {selectedNumber[0]}
-                        compradores = {compradores}
-                        setCompradores = {setCompradores}
-                        selectedSeatsID = {selectedSeatsID}
-                        selectedNumber = {selectedNumber}
+                    <SeatReserver
+                        seat={selectedNumber[0]}
+                        compradores={compradores}
+                        setCompradores={setCompradores}
+                        selectedSeatsID={selectedSeatsID}
+                        selectedNumber={selectedNumber}
                     />
-                :
+                    :
                     selectedNumber.map((seat) => {
                         return (
-                            <SeatReserver key={seat} 
-                                seat = {seat}
-                                compradores = {compradores}
-                                setCompradores = {setCompradores}
-                                selectedSeatsID = {selectedSeatsID}
-                                selectedNumber = {selectedNumber}
-                            />                          
-    
+                            <SeatReserver key={seat}
+                                seat={seat}
+                                compradores={compradores}
+                                setCompradores={setCompradores}
+                                selectedSeatsID={selectedSeatsID}
+                                selectedNumber={selectedNumber}
+                            />
+
                         )
                     })
 
@@ -211,8 +211,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid ${({ captionColor }) => captionColor.border};         // Essa cor deve mudar
-    background-color: ${({ captionColor }) => captionColor.color};    // Essa cor deve mudar
+    border: 1px solid ${({ captionColor }) => captionColor.border};
+    background-color: ${({ captionColor }) => captionColor.color};
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -228,8 +228,8 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid ${({ isAvailable, isSelected }) => isSelected ? "#0E7D71" : isAvailable ? "#808F9D" : "#F7C52B"};         // Essa cor deve mudar
-    background-color: ${({ isAvailable, isSelected }) => isSelected ? "#1AAE9E" : isAvailable ? "#C3CFD9" : "#FBE192"};    // Essa cor deve mudar
+    border: 1px solid ${({ isAvailable, isSelected }) => isSelected ? "#0E7D71" : isAvailable ? "#808F9D" : "#F7C52B"};
+    background-color: ${({ isAvailable, isSelected }) => isSelected ? "#1AAE9E" : isAvailable ? "#C3CFD9" : "#FBE192"};
     height: 25px;
     width: 25px;
     border-radius: 25px;

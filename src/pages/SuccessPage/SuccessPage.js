@@ -37,18 +37,18 @@ export default function SuccessPage({ order, setHome }) {
                 {order.seatsNumber.sort((a, b) => a - b).map(seatNumber => <p key={seatNumber} >Assento {seatNumber}</p>)}
             </TextContainer>
 
-            <>
+            <TextContainer>
+            <strong><p>Comprador(es)</p></strong>
                 {order.reserved.compradores.map(({ nome, cpf }) => {
 
                     return (
-                        <TextContainer data-test="client-info" key={cpf}>
-                            <strong><p>Comprador</p></strong>
+                        <div data-test="client-info" key={cpf}>
                             <p>Nome: {nome}</p>
-                            <p>CPF: {cpf}</p>
-                        </TextContainer>
+                            <p>CPF: {cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")}</p>
+                        </div>
                     )
                 })}
-            </>
+            </TextContainer>
 
 
             <Link to="/">

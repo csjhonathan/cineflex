@@ -10,9 +10,9 @@ export default function SeatReserver({ seat, compradores, setCompradores, select
       const order = [...compradores, data];
       setCompradores(order);
     } else {
-      const remove = compradores.filter(({idAssento})=> idAssento !== data.idAssento);
-      const edited = [...remove, data];
-      setCompradores(edited)
+      const seller = compradores.find(({idAssento}) => idAssento === data.idAssento);
+      seller.nome = nome;
+      seller.cpf = cpf;
     }
   }
 
@@ -37,17 +37,20 @@ export default function SeatReserver({ seat, compradores, setCompradores, select
         onBlur={() => handleReserverObj()}
       />
 
-      <label htmlFor={`cpf${selectedNumber.length <= 1 ? "" : seat}`}>CPF do Comprador {selectedNumber.length <= 1 ? "" : seat}:</label>
+      <label htmlFor={`cpf${selectedNumber.length <= 1 ? "" : seat}`}>CPF do Comprador {selectedNumber.length <= 1 ? "" : seat} (apenas numeros):</label>
       <input
-        placeholder="Digite seu CPF..."
+        placeholder="Digite seu CPF (apenas numeros)"
         required
+        disabled = {checkSeat()}
+        minLength = {11}
+        maxLength = {14}
+        value={cpf}
         id={`cpf${seat}`}
         name={`cpf${seat}`}
         onChange={e => setCpf(e.target.value)}
-        value={cpf}
-        data-test="client-cpf"
         onBlur={() => handleReserverObj()}
-        disabled = {checkSeat()}
+        data-test="client-cpf"
+        
       />
     </>
   )
